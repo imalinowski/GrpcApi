@@ -12,11 +12,23 @@ message User {
   Gender gender = 5;
 }
 
-message RegistrationResult {
+message ManyUsers{
+  User users = 1;
+  int32 pageNum = 2;
+}
+
+message Result {
   bool succeeded = 1;
   string error = 2;
 }
 
+message Id {
+  uint32 id = 1;
+}
+
 service RegistrationService {
-  rpc Register(User) returns (RegistrationResult);
+  rpc get(Id) returns (User);
+  rpc put(User) returns (Result);
+  rpc delete(Id) returns (Result);
+  rpc getMany(Id) returns (ManyUsers);
 }
