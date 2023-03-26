@@ -32,6 +32,11 @@ dependencies {
     api("io.grpc:grpc-kotlin-stub:1.3.0")
     api("io.grpc:grpc-stub:1.44.0")
     runtimeOnly("io.grpc:grpc-netty:1.53.0")
+    //database
+    implementation("org.jetbrains.exposed:exposed-core:0.41.1")
+    implementation("org.jetbrains.exposed:exposed-dao:0.41.1")
+    implementation("org.jetbrains.exposed:exposed-jdbc:0.41.1")
+    implementation("com.h2database:h2:2.1.214")
 }
 
 tasks.test {

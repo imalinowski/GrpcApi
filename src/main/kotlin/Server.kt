@@ -26,6 +26,8 @@ private class RegistrationService : RegistrationServiceCoroutineImplBase() {
 }
 
 fun main() {
+    DatabaseFactory.init()
+
     val port = 50051
     //prepare and run the gRPC web server
     val server = ServerBuilder
