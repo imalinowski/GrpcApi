@@ -1,7 +1,5 @@
 syntax = "proto3";
 
-package ru.grpctest;
-
 message User {
   string lastname = 1;
   string firstname = 2;

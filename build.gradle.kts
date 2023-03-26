@@ -2,7 +2,7 @@ import com.google.protobuf.gradle.*
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm") version "1.8.0"
+    kotlin("jvm") version "1.6.10"
     application
     id("com.google.protobuf") version "0.8.18"
 }
@@ -30,7 +30,7 @@ dependencies {
     api("com.google.protobuf:protobuf-java-util:3.22.2")
     api("com.google.protobuf:protobuf-kotlin:3.22.2")
     api("io.grpc:grpc-kotlin-stub:1.3.0")
-    api("io.grpc:grpc-stub:1.53.0")
+    api("io.grpc:grpc-stub:1.44.0")
     runtimeOnly("io.grpc:grpc-netty:1.53.0")
 }
 
@@ -38,8 +38,8 @@ tasks.test {
     useJUnitPlatform()
 }
 
-kotlin {
-    jvmToolchain(8)
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = "1.8"
 }
 
 application {
