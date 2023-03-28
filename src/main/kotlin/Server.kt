@@ -32,24 +32,29 @@ private class RegistrationService : RegistrationServiceCoroutineImplBase() {
     override suspend fun get(request: Register.Id): User =
         try {
             val user = daoImpl.getUser(request.id)
-            User.newBuilder().apply {
-                lastname = user?.lastname
-                firstname = user?.firstname
-                middlename = user?.middlename
+            println("Send User with id ${request.id} is ${user != null}")
+            user {
+                lastname = user?.lastname ?: ""
+                firstname = user?.firstname ?: ""
+                middlename = user?.middlename ?: ""
                 age = user?.age ?: 0
-                gender = user?.gender?.map()
-            }.build()
+                gender = user?.gender.map()
+            }
         } catch (t: Throwable) {
-            User.newBuilder().apply {
+            user {
                 lastname = ""
-            }.build()
+            }
         }
 
     override suspend fun delete(request: Register.Id): Result {
-        return super.delete(request)
+        val success = daoImpl.deleteUser(request.id)
+        println("Delete User with id ${request.id} is $success")
+        return result {
+            succeeded = success
+        }
     }
 
-    private fun UserDao.Gender.map(): User.Gender =
+    private fun UserDao.Gender?.map(): User.Gender =
         when (this) {
             UserDao.Gender.MALE -> User.Gender.MALE
             else -> User.Gender.FEMALE
@@ -60,7 +65,7 @@ private class RegistrationService : RegistrationServiceCoroutineImplBase() {
 fun main() {
     DatabaseFactory.init()
 
-    val port = 50051
+    val port = PORT
     //prepare and run the gRPC web server
     val server = ServerBuilder
         .forPort(port)
