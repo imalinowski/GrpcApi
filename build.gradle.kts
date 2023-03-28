@@ -37,6 +37,10 @@ dependencies {
     implementation("org.jetbrains.exposed:exposed-dao:0.41.1")
     implementation("org.jetbrains.exposed:exposed-jdbc:0.41.1")
     implementation("com.h2database:h2:2.1.214")
+    //warning
+//    implementation("org.slf4j:slf4j-api:2.0.5")
+//    implementation("org.slf4j:slf4j-log4j12:2.0.5")
+//    implementation("org.slf4j:slf4j-simple:2.0.5")
 }
 
 tasks.test {

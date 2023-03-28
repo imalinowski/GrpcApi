@@ -15,13 +15,13 @@ interface DAOFacade {
         age: Int,
         gender: Byte
     ): Int
-    suspend fun deleteArticle(id: Int): Boolean
+    suspend fun deleteUser(id: Int): Boolean
     suspend fun allUsers(): List<User>
 }
 
 class DAOFacadeImpl : DAOFacade {
 
-    private fun resultRowToArticle(row: ResultRow) = User(
+    private fun resultRowToUser(row: ResultRow) = User(
         id = row[UserTable.id].value,
         lastname = row[lastname],
         firstname = row[UserTable.firstname],
@@ -33,7 +33,7 @@ class DAOFacadeImpl : DAOFacade {
     override suspend fun getUser(id: Int): User? = dbQuery {
         UserTable
             .select { UserTable.id eq id }
-            .map(::resultRowToArticle)
+            .map(::resultRowToUser)
             .singleOrNull()
     }
 
@@ -53,15 +53,15 @@ class DAOFacadeImpl : DAOFacade {
         }
         insertStatement.resultedValues
             ?.singleOrNull()
-            ?.let(::resultRowToArticle)
+            ?.let(::resultRowToUser)
             ?.id ?: -1
     }
 
-    override suspend fun deleteArticle(id: Int): Boolean = dbQuery {
+    override suspend fun deleteUser(id: Int): Boolean = dbQuery {
         UserTable.deleteWhere { UserTable.id eq id } > 0
     }
 
     override suspend fun allUsers(): List<User> = dbQuery {
-        UserTable.selectAll().map(::resultRowToArticle)
+        UserTable.selectAll().map(::resultRowToUser)
     }
 }
