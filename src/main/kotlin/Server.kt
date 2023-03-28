@@ -14,12 +14,7 @@ private class RegistrationService : RegistrationServiceCoroutineImplBase() {
                 lastname, firstname, middlename, age,
                 gender.number.toByte()
             )
-            println(
-                "Registering user " +
-                        "${request.lastname} ${request.firstname} " +
-                        "${request.middlename}, age: ${request.age}," +
-                        " gender: ${request.gender.name}"
-            )
+            println("Registering user ${request.lastname}")
             return result { succeeded = success }
         }
 
