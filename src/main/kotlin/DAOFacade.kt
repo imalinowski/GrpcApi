@@ -14,7 +14,7 @@ interface DAOFacade {
         middlename: String,
         age: Int,
         gender: Byte
-    ): Boolean
+    ): Int
     suspend fun deleteArticle(id: Int): Boolean
     suspend fun allUsers(): List<User>
 }
@@ -43,7 +43,7 @@ class DAOFacadeImpl : DAOFacade {
         middlename: String,
         age: Int,
         gender: Byte
-    ): Boolean = dbQuery {
+    ): Int = dbQuery {
         val insertStatement = UserTable.insert {
             it[UserTable.lastname] = lastname
             it[UserTable.firstname] = firstname
@@ -51,7 +51,10 @@ class DAOFacadeImpl : DAOFacade {
             it[UserTable.age] = age
             it[UserTable.gender] = gender
         }
-        insertStatement.insertedCount > 0
+        insertStatement.resultedValues
+            ?.singleOrNull()
+            ?.let(::resultRowToArticle)
+            ?.id ?: -1
     }
 
     override suspend fun deleteArticle(id: Int): Boolean = dbQuery {

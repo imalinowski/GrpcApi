@@ -10,39 +10,50 @@ private class RegistrationService : RegistrationServiceCoroutineImplBase() {
 
     override suspend fun put(request: User): Result =
         with(request) {
-            val success = daoImpl.addNewUser(
+            val id = daoImpl.addNewUser(
                 lastname, firstname, middlename, age,
                 gender.number.toByte()
             )
             println("Registering user ${request.lastname}")
-            return result { succeeded = success }
+            return result {
+                succeeded = id != -1
+                if (id != -1) {
+                    message = "Id is $id"
+                } else {
+                    error = "User Create Error"
+                }
+            }
         }
 
     override suspend fun getMany(request: Register.Id): Register.ManyUsers {
         return super.getMany(request)
     }
 
-    override suspend fun get(request: Register.Id): User {
-        val user = daoImpl.getUser(request.id)
-        return User.newBuilder().apply {
-            lastname = user?.lastname
-            firstname = user?.firstname
-            middlename = user?.middlename
-            age = user?.age ?: 0
-            gender = user?.gender?.map()
-        }.build()
-    }
-
-    fun UserDao.Gender.map(): User.Gender =
-        when (this) {
-            UserDao.Gender.MALE -> User.Gender.MALE
-            else -> User.Gender.FEMALE
+    override suspend fun get(request: Register.Id): User =
+        try {
+            val user = daoImpl.getUser(request.id)
+            User.newBuilder().apply {
+                lastname = user?.lastname
+                firstname = user?.firstname
+                middlename = user?.middlename
+                age = user?.age ?: 0
+                gender = user?.gender?.map()
+            }.build()
+        } catch (t: Throwable) {
+            User.newBuilder().apply {
+                lastname = ""
+            }.build()
         }
-
 
     override suspend fun delete(request: Register.Id): Result {
         return super.delete(request)
     }
+
+    private fun UserDao.Gender.map(): User.Gender =
+        when (this) {
+            UserDao.Gender.MALE -> User.Gender.MALE
+            else -> User.Gender.FEMALE
+        }
 
 }
 
