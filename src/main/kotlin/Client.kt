@@ -2,6 +2,7 @@ import Register.User.Gender.FEMALE
 import Register.User.Gender.MALE
 import RegistrationServiceGrpcKt.RegistrationServiceCoroutineStub
 import io.grpc.ManagedChannelBuilder
+import kotlinx.coroutines.flow.toList
 
 const val PORT = 50051
 private val channel = ManagedChannelBuilder.forAddress("localhost", PORT)
@@ -13,13 +14,11 @@ suspend fun main() {
         val result = when (readln().lowercase().trim()) {
             "put" -> putUser()
             "get" -> getUser()
-            "getMany" -> getManyUsers()
+            "getmany" -> getManyUsers()
             "delete" -> deleteUser()
-            else -> {
-                Register.Result.newBuilder().apply {
-                    succeeded = false
-                    error = "Unknown Command!"
-                }.build()
+            else -> result {
+                succeeded = false
+                error = "Unknown Command!"
             }
         }
         if (result.succeeded) {
@@ -65,9 +64,24 @@ private suspend fun getUser(): Register.Result {
 }
 
 private suspend fun getManyUsers(): Register.Result {
-    return Register.Result.newBuilder().apply {
-        succeeded = false
-    }.build()
+    val flowUsers = stub.getMany(manyRequest {
+        pageNum = readln("number of pages : ").toInt()
+        pageLength = readln("length of page : ").toInt()
+    })
+    flowUsers.toList().flatMap {
+        if (it.error.isNotEmpty()) {
+            return result {
+                succeeded = false
+                error = it.error
+            }
+        }
+        it.usersList
+    }.onEach { user ->
+        println(user)
+    }
+    return result {
+        succeeded = true
+    }
 }
 
 private fun readln(message: String): String {

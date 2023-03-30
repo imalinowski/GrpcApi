@@ -12,15 +12,21 @@ message User {
   Gender gender = 5;
 }
 
-message ManyUsers{
-  User users = 1;
-  int32 pageNum = 2;
-}
-
 message Result {
   bool succeeded = 1;
   string error = 2;
   string message = 3;
+}
+
+message ManyUsers{
+  repeated User users = 1;
+  int32 pageNum = 2;
+  string error = 3;
+}
+
+message ManyRequest {
+  uint32 pageLength = 1;
+  uint32 pageNum = 2;
 }
 
 message Id {
@@ -31,5 +37,5 @@ service RegistrationService {
   rpc get(Id) returns (User);
   rpc put(User) returns (Result);
   rpc delete(Id) returns (Result);
-  rpc getMany(Id) returns (ManyUsers);
+  rpc getMany(ManyRequest) returns (stream ManyUsers);
 }
